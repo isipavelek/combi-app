@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# 🚌 CombiApp – Escuela Técnica Roberto Rocca (ETRR) Campana
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**CombiApp** es una aplicación web desarrollada para gestionar y coordinar de manera eficiente el uso diario de una combi institucional utilizada por los estudiantes, docentes o personal de la **Escuela Técnica Roberto Rocca**. 
 
-## Available Scripts
+Permite a cada usuario registrar si utilizará el servicio, en qué parada subirá y con qué frecuencia, al tiempo que brinda un resumen visual y dinámico del uso del día, incluyendo un mapa de ubicación en tiempo real para optimizar la logística del viaje.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 Funcionalidades principales
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- ✅ Registro semanal del uso de la combi.
+- 📍 Selección personalizada de parada por día.
+- 🔁 Marcado de viajes como **recurrentes** o únicos.
+- 📊 Resumen del día:
+  - Lista de pasajeros por parada.
+  - Usuarios que **no viajan**.
+  - Usuarios que **no respondieron**.
+- 📡 Compartir ubicación en tiempo real (**un usuario a la vez**).
+- 🗺️ Visualización del recorrido en un **mapa en vivo** actualizado cada 30 segundos.
+- 🔔 Notificaciones automáticas para todos los usuarios si hay cambios entre las **05:00 y las 08:30 hs**.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🧠 Flujo de uso
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. El usuario inicia sesión con su cuenta Google institucional.
+2. Completa su plan semanal de viaje indicando:
+   - Si utilizará o no la combi.
+   - En qué parada se subirá.
+   - Si es un viaje **recurrente**.
+3. Desde el botón *Resumen del día* accede a:
+   - La lista de todos los pasajeros, organizada por parada.
+   - Información sobre quién **no viaja** o aún **no respondió**.
+4. Si nadie está compartiendo ubicación, se ofrece la opción para hacerlo.
+5. Si alguien está compartiendo ubicación, todos podrán ver su posición actual en un mapa.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 💻 Tecnologías utilizadas
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- React + Bootstrap
+- Firebase:
+  - Firestore
+  - Authentication
+  - Cloud Messaging
+- Leaflet + React Leaflet (para mapas en tiempo real)
+- Notificaciones Web Push (FCM)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 📦 Instalación y uso local
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clonar el repositorio:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   git clone https://github.com/tu-usuario/combiapp.git
+   cd combiapp
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Instalar dependencias
+    
+    npm install
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. Ejecutar la aplicación 
+    
+    npm start
 
-## Learn More
+🔧 Recordá configurar tu proyecto de Firebase y colocar tus credenciales en el bloque firebaseConfig.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+🔐 Seguridad y control
+Solo usuarios autenticados pueden acceder a la app.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Cada usuario visualiza su propio plan de viaje.
 
-### Code Splitting
+La ubicación solo se comparte si es autorizada explícitamente.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+El sistema impide que haya más de un usuario compartiendo ubicación al mismo tiempo.
 
-### Analyzing the Bundle Size
+📍 Sobre el proyecto
+Este desarrollo forma parte de una iniciativa educativa y organizacional de la Escuela Técnica Roberto Rocca (ETRR) – Campana, para mejorar la logística del transporte institucional, promoviendo el uso de tecnologías modernas, el cuidado del tiempo y la colaboración.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+🙌 Créditos
+Desarrollado por: Israel Pavelek
+Dirección: Escuela Técnica Roberto Rocca – Campana
+Contacto: [📧 ipavelek@etrr.edu.ar]
