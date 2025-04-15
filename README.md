@@ -1,6 +1,6 @@
 # 🚌 CombiApp – Escuela Técnica Roberto Rocca (ETRR) Campana
 
-**CombiApp** es una aplicación web desarrollada para gestionar y coordinar de manera eficiente el uso diario de una combi institucional utilizada por los estudiantes, docentes o personal de la **Escuela Técnica Roberto Rocca**. 
+**CombiApp** es una aplicación web desarrollada para gestionar y coordinar de manera eficiente el uso diario de una combi institucional utilizada docentes y personal de la **Escuela Técnica Roberto Rocca**. 
 
 Permite a cada usuario registrar si utilizará el servicio, en qué parada subirá y con qué frecuencia, al tiempo que brinda un resumen visual y dinámico del uso del día, incluyendo un mapa de ubicación en tiempo real para optimizar la logística del viaje.
 
