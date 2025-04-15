@@ -19,13 +19,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBvRzi4aDOgzdTHtnQmJh_fRh3kqurBXeA",
-  authDomain: "combiapp-e585a.firebaseapp.com",
-  projectId: "combiapp-e585a",
-  storageBucket: "combiapp-e585a.firebasestorage.app",
-  messagingSenderId: "884793176289",
-  appId: "1:884793176289:web:7402bda2ef660077c607a0",
-  measurementId: "G-QNHCT5VXK8"
+ 
 };
 
 const app = initializeApp(firebaseConfig);
