@@ -62,14 +62,25 @@ function App() {
         // FCM Logic
         if (u) {
           try {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
+            if (Notification.permission === 'granted') {
+              // Explicitly register service worker with cache busting
+              const swUrl = `/firebase-messaging-sw.js?v=${new Date().getTime()}`;
+              const registration = await navigator.serviceWorker.register(swUrl);
+              console.log("Service Worker registered:", registration);
+
+              // Wait for the service worker to be active/ready
+              const readyRegistration = await navigator.serviceWorker.ready;
+
               const token = await getToken(messaging, { 
-                vapidKey: "IloSmezI9GJwGyaaS4jnuAm1BgOtV6fd4a8AGNiZ-MU" 
+                vapidKey: "BCWyO6hYQZmjF7UoYLUpMrCmbrmIKvDyynVCmUTj_AHu9NZoiSsn1wUyKNrFiMN-MXiF5ZPbooqcrpuktNDc5Lc",
+                serviceWorkerRegistration: readyRegistration
               });
               console.log("FCM Token:", token);
               // Save token to user doc
               await setDoc(doc(db, 'users', emailLower), { fcmToken: token }, { merge: true });
+            } else if (Notification.permission === 'default') {
+              // Do not request automatically to avoid violation
+              console.log("Notification permission is default. Waiting for user interaction.");
             }
           } catch (err) {
             console.error("FCM Error:", err);
@@ -106,6 +117,40 @@ function App() {
   const [nombre, setNombre] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [authError, setAuthError] = useState('');
+
+  const [showNotificationButton, setShowNotificationButton] = useState(false);
+
+  useEffect(() => {
+    if (Notification.permission === 'default') {
+      setShowNotificationButton(true);
+    }
+  }, []);
+
+  const enableNotifications = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        setShowNotificationButton(false);
+        // Trigger FCM setup manually
+        const swUrl = `/firebase-messaging-sw.js?v=${new Date().getTime()}`;
+        const registration = await navigator.serviceWorker.register(swUrl);
+        const readyRegistration = await navigator.serviceWorker.ready;
+        
+        const token = await getToken(messaging, { 
+          vapidKey: "BCWyO6hYQZmjF7UoYLUpMrCmbrmIKvDyynVCmUTj_AHu9NZoiSsn1wUyKNrFiMN-MXiF5ZPbooqcrpuktNDc5Lc",
+          serviceWorkerRegistration: readyRegistration
+        });
+        
+        if (user) {
+           await setDoc(doc(db, 'users', user.email.toLowerCase()), { fcmToken: token }, { merge: true });
+        }
+        alert("✅ Notificaciones activadas correctamente.");
+      }
+    } catch (error) {
+      console.error("Error enabling notifications:", error);
+      alert("Error al activar notificaciones.");
+    }
+  };
 
   // Helper to check if within allowed time (06:30 - 09:00)
   const isTimeAllowed = () => {
@@ -438,6 +483,17 @@ function App() {
           </div>
         </div>
       </nav>
+
+      {showNotificationButton && (
+        <div className="container mb-3">
+          <button 
+            className="btn btn-success w-100 shadow-sm fw-bold"
+            onClick={enableNotifications}
+          >
+            🔔 Activar Notificaciones
+          </button>
+        </div>
+      )}
 
       <div className="container">
         {/* Toggle View */}

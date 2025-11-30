@@ -52,6 +52,28 @@ function Chat({ user, onClose }) {
       timestamp: serverTimestamp(),
     });
 
+    // Notify others via Cloud Run Service
+    try {
+      // Note: In production, use the deployed Cloud Run URL.
+      // For local testing, we use localhost:8080.
+      const SERVICE_URL = 'http://localhost:8080/on-chat-message';
+      
+      await fetch(SERVICE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: newMessage,
+          senderName: user.displayName,
+          senderEmail: user.email
+        })
+      });
+
+    } catch (error) {
+      console.error("Error sending chat notification:", error);
+    }
+
     setNewMessage('');
   };
 

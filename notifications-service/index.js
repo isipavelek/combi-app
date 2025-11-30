@@ -6,13 +6,26 @@ require('dotenv').config();
 // Initialize Firebase Admin
 // In Cloud Run, this uses Application Default Credentials automatically.
 // Locally, you need GOOGLE_APPLICATION_CREDENTIALS env var or logged in via gcloud.
-admin.initializeApp();
+const path = require('path');
+const fs = require('fs');
+const serviceAccountPath = path.join(__dirname, 'service-account.json');
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 const app = express();
 
 // Middleware
 app.use(cors({ origin: true })); // Allow all origins for now, restrict in production
 app.use(express.json());
+
+// Request Logger
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
 
 const db = admin.firestore();
 const messaging = admin.messaging();

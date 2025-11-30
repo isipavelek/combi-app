@@ -252,15 +252,21 @@ function AdminPanel({ user, onClose }) {
     }
   };
 
-  const handleNotify = async () => {
-    const message = prompt("Mensaje para notificar a TODOS los usuarios:");
-    if (!message) return;
+  const [showNotifyModal, setShowNotifyModal] = useState(false);
+  const [notifyMessage, setNotifyMessage] = useState('');
 
-    if (window.confirm(`¿Enviar notificación: "${message}"?`)) {
-      try {
-        // 1. Save to Chat (History)
-        await addDoc(collection(db, 'chat_messages'), {
-          text: `📢 ADMIN: ${message}`,
+  const handleNotifyClick = () => {
+    setShowNotifyModal(true);
+    setNotifyMessage('');
+  };
+
+  const confirmNotify = async () => {
+    if (!notifyMessage.trim()) return;
+
+    try {
+      // 1. Save to Chat (History)
+      await addDoc(collection(db, 'chat_messages'), {
+        text: `📢 ADMIN: ${notifyMessage}`,
           sender: 'Admin',
           timestamp: serverTimestamp(),
           isAdmin: true
@@ -281,7 +287,7 @@ function AdminPanel({ user, onClose }) {
           },
           body: JSON.stringify({
             title: "📢 Aviso de CombiApp",
-            body: message
+            body: notifyMessage
           })
         });
 
@@ -293,12 +299,12 @@ function AdminPanel({ user, onClose }) {
         
         console.log("Notification result:", result);
         alert(`✅ Notificación enviada. (Éxito: ${result.sentCount})`);
+        setShowNotifyModal(false);
 
       } catch (error) {
         console.error("Error sending notification:", error);
         alert("❌ Error al enviar notificación: " + error.message);
       }
-    }
   };
 
   const currentStops = activeTab === 'ida' ? stopsIda : stopsVuelta;
@@ -506,10 +512,30 @@ function AdminPanel({ user, onClose }) {
             </div>
             )}
 
+            {/* Notification Modal Overlay */}
+            {showNotifyModal && (
+              <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 1050, borderRadius: '15px' }}>
+                <div className="card p-4 shadow-lg" style={{ width: '80%' }}>
+                  <h5 className="mb-3">📢 Enviar Notificación</h5>
+                  <textarea 
+                    className="form-control mb-3" 
+                    rows="3" 
+                    placeholder="Escribe el mensaje para todos los usuarios..."
+                    value={notifyMessage}
+                    onChange={(e) => setNotifyMessage(e.target.value)}
+                  ></textarea>
+                  <div className="d-flex justify-content-end gap-2">
+                    <button className="btn btn-secondary" onClick={() => setShowNotifyModal(false)}>Cancelar</button>
+                    <button className="btn btn-primary" onClick={confirmNotify}>Enviar</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
           <div className="modal-footer border-0 justify-content-between">
             {activeTab !== 'usuarios' ? (
-              <button type="button" className="btn btn-warning" onClick={handleNotify}>📢 Notificar Cambios</button>
+              <button type="button" className="btn btn-warning" onClick={handleNotifyClick}>📢 Notificar Cambios</button>
             ) : <div></div>}
             <div>
               <button type="button" className="btn btn-secondary me-2" onClick={onClose}>Cancelar</button>
