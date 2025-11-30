@@ -60,7 +60,7 @@ function Chat({ user, isAdmin, onClose }) {
   const handleDeleteMessage = async (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    alert("Debug: Intentando borrar mensaje " + id); // Debug
+    console.log("Debug: Intentando borrar mensaje " + id);
     if (!window.confirm("¿Borrar este mensaje?")) return;
     try {
       await deleteDoc(doc(db, 'chat_messages', id));
@@ -73,7 +73,7 @@ function Chat({ user, isAdmin, onClose }) {
   const handleClearChat = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    alert("Debug: Intentando vaciar chat"); // Debug
+    console.log("Debug: Intentando vaciar chat");
     if (!window.confirm("⚠️ ¿Seguro que quieres ELIMINAR TODO el historial del chat?")) return;
     try {
       // Delete all messages (not just the visible ones)
