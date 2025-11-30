@@ -101,6 +101,7 @@ exports.sendBroadcastNotification = functions.https.onCall(async (data, context)
 exports.onNewChatMessage = functions.firestore
   .document('chat_messages/{messageId}')
   .onCreate(async (snap, context) => {
+    // Trigger redeploy - Debugging chat notifications
     const newValue = snap.data();
     if (!newValue) {
       console.log("No data found in snapshot (likely a console test).");
