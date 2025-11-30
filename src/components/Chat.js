@@ -57,21 +57,24 @@ function Chat({ user, isAdmin, onClose }) {
     setNewMessage('');
   };
 
-  const handleDeleteMessage = async (id) => {
+  const handleDeleteMessage = async (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!window.confirm("¿Borrar este mensaje?")) return;
     try {
       await deleteDoc(doc(db, 'chat_messages', id));
     } catch (error) {
       console.error("Error deleting message:", error);
+      alert("Error al borrar: " + error.message);
     }
   };
 
-  const handleClearChat = async () => {
+  const handleClearChat = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!window.confirm("⚠️ ¿Seguro que quieres ELIMINAR TODO el historial del chat?")) return;
     try {
       // Delete all messages (not just the visible ones)
-      // Note: In a real large app, this should be a Cloud Function to handle >500 docs.
-      // For this app, client-side batch is likely fine.
       const q = query(collection(db, 'chat_messages'));
       const snapshot = await getDocs(q);
       
@@ -84,7 +87,7 @@ function Chat({ user, isAdmin, onClose }) {
       alert("✅ Chat vaciado.");
     } catch (error) {
       console.error("Error clearing chat:", error);
-      alert("Error al vaciar el chat.");
+      alert("Error al vaciar el chat: " + error.message);
     }
   };
 
@@ -145,8 +148,8 @@ function Chat({ user, isAdmin, onClose }) {
                   {isAdmin && (
                     <button 
                       className="btn btn-link text-danger p-0 ms-2" 
-                      style={{ textDecoration: 'none', fontSize: '1rem', lineHeight: 1 }}
-                      onClick={() => handleDeleteMessage(msg.id)}
+                      style={{ textDecoration: 'none', fontSize: '1rem', lineHeight: 1, zIndex: 10 }}
+                      onClick={(e) => handleDeleteMessage(e, msg.id)}
                     >
                       &times;
                     </button>
