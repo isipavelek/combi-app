@@ -169,59 +169,6 @@ function Configuracion({ user, onClose }) {
           <div className="modal-footer border-0">
             <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={onClose}>Cancelar</button>
             <button type="button" className="btn btn-primary rounded-pill px-4" onClick={handleSave}>Guardar</button>
-            {/* Debug Section */}
-            <div className="mt-4 pt-3 border-top">
-              <h6 className="fw-bold text-danger mb-2">🐞 Zona de Debug</h6>
-              <div className="small text-muted mb-2">
-                Permiso: <strong>{Notification.permission}</strong>
-              </div>
-              <div className="d-flex gap-2">
-                <button 
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={async () => {
-                    try {
-                      const token = await getToken(messaging, { vapidKey: "IloSmezI9GJwGyaaS4jnuAm1BgOtV6fd4a8AGNiZ-MU" });
-                      navigator.clipboard.writeText(token);
-                      alert("Token copiado al portapapeles: " + token.substring(0, 10) + "...");
-                    } catch (e) {
-                      alert("Error obteniendo token: " + e.message);
-                    }
-                  }}
-                >
-                  🔑 Copiar Token
-                </button>
-                <button 
-                  className="btn btn-outline-info btn-sm"
-                  onClick={() => {
-                    // Play a simple beep
-                    try {
-                      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                      const oscillator = audioContext.createOscillator();
-                      const gainNode = audioContext.createGain();
-
-                      oscillator.connect(gainNode);
-                      gainNode.connect(audioContext.destination);
-
-                      oscillator.type = 'sine';
-                      oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // High beep
-                      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                      
-                      oscillator.start();
-                      oscillator.stop(audioContext.currentTime + 0.2);
-                    } catch (e) {
-                      console.error("Audio play failed", e);
-                    }
-
-                    new Notification("Prueba Local", { 
-                      body: "Si ves esto, los permisos están bien.",
-                      silent: false // Try to force system sound if supported
-                    });
-                  }}
-                >
-                  🔔 Test Local
-                </button>
-              </div>
-            </div>
 
           </div>
         </div>
