@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp, where } from 'firebase/firestore';
+import { collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp, where, doc, deleteDoc, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
-function Chat({ user, onClose }) {
+function Chat({ user, isAdmin, onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null);
@@ -57,6 +57,37 @@ function Chat({ user, onClose }) {
     setNewMessage('');
   };
 
+  const handleDeleteMessage = async (id) => {
+    if (!window.confirm("¿Borrar este mensaje?")) return;
+    try {
+      await deleteDoc(doc(db, 'chat_messages', id));
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    }
+  };
+
+  const handleClearChat = async () => {
+    if (!window.confirm("⚠️ ¿Seguro que quieres ELIMINAR TODO el historial del chat?")) return;
+    try {
+      // Delete all messages (not just the visible ones)
+      // Note: In a real large app, this should be a Cloud Function to handle >500 docs.
+      // For this app, client-side batch is likely fine.
+      const q = query(collection(db, 'chat_messages'));
+      const snapshot = await getDocs(q);
+      
+      const batch = writeBatch(db);
+      snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      
+      await batch.commit();
+      alert("✅ Chat vaciado.");
+    } catch (error) {
+      console.error("Error clearing chat:", error);
+      alert("Error al vaciar el chat.");
+    }
+  };
+
   // Format timestamp to HH:mm
   const formatTime = (timestamp) => {
     if (!timestamp) return '';
@@ -78,10 +109,28 @@ function Chat({ user, onClose }) {
     }}>
       <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center" style={{ borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}>
         <h5 className="mb-0 small fw-bold">💬 Chat Grupal</h5>
-        <button type="button" className="btn-close btn-close-white small" onClick={onClose}></button>
+        <div className="d-flex align-items-center gap-2">
+          {isAdmin && (
+            <button 
+              type="button" 
+              className="btn btn-sm btn-danger py-0 px-2" 
+              style={{ fontSize: '0.8rem' }}
+              onClick={handleClearChat}
+              title="Vaciar Chat"
+            >
+              🗑️ Vaciar
+            </button>
+          )}
+          <button type="button" className="btn-close btn-close-white small" onClick={onClose}></button>
+        </div>
       </div>
       
       <div className="card-body p-3" style={{ overflowY: 'auto', flex: 1, backgroundColor: '#f8f9fa' }}>
+        <div className="text-center mb-3">
+          <span className="badge bg-light text-muted border fw-normal" style={{ fontSize: '0.7rem' }}>
+            🕒 Los mensajes se eliminan automáticamente luego de las 19:00 hs
+          </span>
+        </div>
         {messages.map((msg) => {
           const isMe = msg.senderEmail === user.email;
           return (
@@ -91,7 +140,18 @@ function Chat({ user, onClose }) {
                 style={{ maxWidth: '80%', fontSize: '0.9rem' }}
               >
                 {!isMe && <div className="fw-bold small text-secondary mb-1">{msg.senderName}</div>}
-                <div>{msg.text}</div>
+                <div className="d-flex justify-content-between align-items-center gap-2">
+                  <div>{msg.text}</div>
+                  {isAdmin && (
+                    <button 
+                      className="btn btn-link text-danger p-0 ms-2" 
+                      style={{ textDecoration: 'none', fontSize: '1rem', lineHeight: 1 }}
+                      onClick={() => handleDeleteMessage(msg.id)}
+                    >
+                      &times;
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="text-muted small mt-1" style={{ fontSize: '0.7rem' }}>
                 {formatTime(msg.timestamp)}

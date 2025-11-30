@@ -572,7 +572,7 @@ function App() {
       </button>
 
       {/* Chat Component */}
-      {mostrarChat && <Chat user={user} onClose={() => setMostrarChat(false)} />}
+      {mostrarChat && <Chat user={user} isAdmin={isUserAdmin} onClose={() => setMostrarChat(false)} />}
 
       {/* Config Modal */}
       {mostrarConfig && <Configuracion user={user} onClose={() => setMostrarConfig(false)} />}
