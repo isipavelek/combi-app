@@ -193,7 +193,29 @@ function Configuracion({ user, onClose }) {
                 <button 
                   className="btn btn-outline-info btn-sm"
                   onClick={() => {
-                    new Notification("Prueba Local", { body: "Si ves esto, los permisos están bien." });
+                    // Play a simple beep
+                    try {
+                      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                      const oscillator = audioContext.createOscillator();
+                      const gainNode = audioContext.createGain();
+
+                      oscillator.connect(gainNode);
+                      gainNode.connect(audioContext.destination);
+
+                      oscillator.type = 'sine';
+                      oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // High beep
+                      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                      
+                      oscillator.start();
+                      oscillator.stop(audioContext.currentTime + 0.2);
+                    } catch (e) {
+                      console.error("Audio play failed", e);
+                    }
+
+                    new Notification("Prueba Local", { 
+                      body: "Si ves esto, los permisos están bien.",
+                      silent: false // Try to force system sound if supported
+                    });
                   }}
                 >
                   🔔 Test Local
