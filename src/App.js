@@ -96,10 +96,21 @@ function App() {
     // Foreground Message Listener
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
-      new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: '/logo192.png'
-      });
+      // Use ServiceWorkerRegistration to show notification (required on mobile)
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: '/logo192.png'
+          });
+        });
+      } else {
+        // Fallback for non-SW environments (unlikely in this app)
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+          icon: '/logo192.png'
+        });
+      }
     });
 
     return () => unsubscribe();
