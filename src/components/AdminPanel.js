@@ -266,15 +266,33 @@ function AdminPanel({ user, onClose }) {
           isAdmin: true
         });
 
-        // 2. Send Push Notification (Cloud Function)
-        const sendBroadcast = httpsCallable(functions, 'sendBroadcastNotification');
-        const result = await sendBroadcast({ 
-          title: "📢 Aviso de CombiApp", 
-          body: message 
-        });
+        // 2. Send Push Notification (Cloud Run Service)
+        // Note: In production, use the deployed Cloud Run URL.
+        // For local testing, we use localhost:8080.
+        const SERVICE_URL = 'http://localhost:8080/send-broadcast';
         
-        console.log("Notification result:", result.data);
-        alert(`✅ Notificación enviada. (Éxito: ${result.data.sentCount})`);
+        const idToken = await user.getIdToken();
+        
+        const response = await fetch(SERVICE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+          },
+          body: JSON.stringify({
+            title: "📢 Aviso de CombiApp",
+            body: message
+          })
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Error sending notification');
+        }
+        
+        console.log("Notification result:", result);
+        alert(`✅ Notificación enviada. (Éxito: ${result.sentCount})`);
 
       } catch (error) {
         console.error("Error sending notification:", error);
